@@ -1,0 +1,10 @@
+{
+	"files.associations": {
+		"*.embeddedhtml": "html",
+		"iostream": "cpp",
+		"ostream": "cpp",
+		"typeindex": "cpp",
+		"typeinfo": "cpp",
+		"new": "cpp"
+	}
+}
