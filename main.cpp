@@ -1,66 +1,61 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-char grid[105][105];
-bool vis[105][105];
-vector<pair<int,int>> mv = {{-1,0}, {1,0}, {0, -1}, {0, 1}};
-int n, m;
+// Problem Statement
+// You will be given a directed graph as input. Then you will receive Q queries. For each query, you will be given two nodes, A and B. You need to determine whether you can go from A to B directly without using any other nodes.
 
-bool valid(int i, int j) {
-    if (i<0 || i>=n || j<0 || j>=m) return false;
-    return true;
-}
+// Input Format
+// The first line will contain N and E, the number of nodes and the number of edges, respectively. The values of the nodes range from 0 to N-1.
+// Next E lines will contain two node values which means there is a connection from first node to second node.
+// The next line will contain Q.
+// The following Q lines will each contain A and B.
 
-void bfs(int si, int sj){
-    queue<pair<int, int>> q;
-    q.push({si, sj});
-    vis[si][sj] = true;
-
-    while (!q.empty())
-    {
-        pair<int, int> fr = q.front();
-        q.pop();
-
-        cout << fr.first << " " << fr.second << endl;
-
-        for (int i = 0; i < 4; i++)
-        {
-            int childRow = fr.first + mv[i].first;
-            int childCol = fr.second + mv[i].second;
-
-            if(valid(childRow, childCol) && !vis[childRow][childCol])
-                {
-                    q.push({childRow, childCol});
-                    vis[childRow][childCol] = true;
-                }
-        }
-        
-    }
-    
-}
+// Output Format
+// For each query output YES if it is possible to go from A to B directly without using any other nodes, NO otherwise. Don't forget to put a new line after each query.
 
 int main() {
     
-    cin >> n >> m;
+    int n, e;
+    cin >> n >> e;
+    int mt[n][n];
+    memset(mt, 0, sizeof(mt));
 
     for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++)
-            cin >> grid[i][j];
-    
-    
-    // print
+        for (int j = 0; j < n; j++)
+            if(i==j)
+                mt[i][j]=1;
+        
+
+    while (e--)
+    {
+        int i, j;
+        cin >> i >> j;
+
+        mt[i][j] = 1;
+    }
+
+
     // for (int i = 0; i < n; i++)
     // {
-    //     for (int j = 0; j < m; j++)
-    //         cout << grid[i][j] << " ";
+    //     for (int j = 0; j < n; j++)
+    //             cout << mt[i][j] << " ";
     //     cout << endl;
     // }
-    
-    int srcRow, srcCol;
-    cin >> srcRow >> srcCol;
 
-    memset(vis, false, sizeof(vis));
-    bfs(srcRow, srcCol);
+    int q;
+    cin >> q;
+        
+    while (q--)
+    {
+        int i, j;
+        cin >> i >> j;
+
+        if(mt[i][j] == 1)
+            cout << "YES" << endl;
+        else
+            cout << "NO" << endl;
+    }
+    
     
     return 0;
 }
