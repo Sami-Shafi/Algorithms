@@ -1,29 +1,40 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// You are given an NXM sized 2D matrix that represents a map of a building. Each cell represents a wall, a floor or a room. You will be given two rooms A and B. You need to tell if you can go from room  to  by passing through the floors. You can walk left, right, up, and down through the floor cells. You can't pass through walls.
+// You are given an NXM sized 2D matrix that represents a map of a building. Each cell represents a wall or a room. The connected rooms are called apartments. Your task is to count the number of apartments in that building. You can walk left, right, up, and down through the room cells. You can't pass through walls.
 
 // Input Format
 // The first input line has two integers N and M: the height and width of the map.
-// Then there are N lines of M characters describing the map. Each character is .(floor), #(wall), A or B (rooms).
+// Then there are N lines of M characters describing the map. Each character is either .(room) or #(wall).
 
 // Output Format
-// Output YES if you can go from room  to , NO otherwise.
+// Output the number of apartments
 
 // Sample Input 0
 // 5 8
 // ########
-// #.A#...#
-// #.##.#B#
-// #......#
+// #..#...#
+// ####.#.#
+// #..#...#
 // ########
 
 // Sample Output 0
-// YES
+// 3
+
+// Sample Input 1
+// 6 8
+// .#.#####
+// .#.###..
+// #..#...#
+// #.##....
+// ..##.###
+// #.#.##.#
+
+// Sample Output 1
+// 5
 
 char grid[1005][1005];
 bool vis[1005][1005];
-int level[1005][1005];
 vector<pair<int,int>> mv = {{-1,0}, {1,0}, {0, -1}, {0, 1}};
 int n, m;
 
@@ -32,65 +43,41 @@ bool valid(int i, int j) {
     return true;
 }
 
-void reachabilityWithBFS(int si, int sj, int di, int dj) {
-    if(!valid(si, sj)) return;
-    queue<pair<int, int>> q;
-    q.push({si, sj});
+void dfs(int si, int sj) {
     vis[si][sj] = true;
-    level[si][sj] = 0;
-
-    while (!q.empty())
+    for (int i = 0; i < 4; i++)
     {
-        pair<int, int> fr = q.front();
-        q.pop();
-
-        // cout << "Parent -> " << fr.first << " " << fr.second << endl;
-
-        for (int i = 0; i < 4; i++)
-        {
-            int ci = fr.first + mv[i].first;
-            int cj = fr.second + mv[i].second;
-
-            if(valid(ci, cj) && !vis[ci][cj] && grid[ci][cj] != '#')
-            {
-                q.push({ci, cj});
-                vis[ci][cj] = true;
-                level[ci][cj] = level[fr.first][fr.second] + 1;
-            }
-        }
+        int ci = si + mv[i].first;
+        int cj = sj + mv[i].second;
         
+        if (valid(ci, cj) && !vis[ci][cj] && grid[ci][cj] == '.')
+            dfs(ci, cj);
     }
     
-    if(level[di][dj] == -1){
-        cout << "NO";
-    }else {
-        cout << "YES";
-    }
 }
 
 int main() {
     
     cin >> n >> m;
-    int si,sj,di,dj;
+    memset(vis, false, sizeof(vis));
 
     for (int i = 0; i < n; i++)
         for (int j = 0; j < m; j++)
-            {
-                char ourChar;
-                cin >> ourChar;
-                grid[i][j] = ourChar;
-                if(ourChar == 'A'){
-                    si = i;
-                    sj = j;
-                }else if(ourChar == 'B'){
-                    di = i;
-                    dj = j;
-                }
-            }
+            cin >> grid[i][j];
 
-    memset(vis, false, sizeof(vis));
-    memset(level, -1, sizeof(level));
-    reachabilityWithBFS(si, sj, di, dj);
+    int apartments = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (!vis[i][j] && grid[i][j] == '.') {
+                apartments++;
+                dfs(i, j);
+            }
+        }
+    }
+
+    cout << apartments << endl;
+
+    // memset(level, -1, sizeof(level));
     // cout << si << " " << sj << " |" << " " << di << " " << dj;
 
     return 0;
