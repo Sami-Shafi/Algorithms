@@ -11,20 +11,30 @@ bool valid(int i, int j) {
     return true;
 }
 
-void dfs(int si, int sj){
-    // cout << "Parent Index: ";
-    cout << si << " " << sj << endl;
-    // cout << "-----------" << endl;
+void bfs(int si, int sj){
+    queue<pair<int, int>> q;
+    q.push({si, sj});
     vis[si][sj] = true;
 
-    for (int i = 0; i < 4; i++)
+    while (!q.empty())
     {
-        int childRow, childCol;
-        childRow = si + mv[i].first;
-        childCol = sj + mv[i].second;
-        // cout << "Child Index: " << childRow << " " << childCol << endl;
-        if(valid(childRow, childCol) && !vis[childRow][childCol])
-            dfs(childRow, childCol);
+        pair<int, int> fr = q.front();
+        q.pop();
+
+        cout << fr.first << " " << fr.second << endl;
+
+        for (int i = 0; i < 4; i++)
+        {
+            int childRow = fr.first + mv[i].first;
+            int childCol = fr.second + mv[i].second;
+
+            if(valid(childRow, childCol) && !vis[childRow][childCol])
+                {
+                    q.push({childRow, childCol});
+                    vis[childRow][childCol] = true;
+                }
+        }
+        
     }
     
 }
@@ -50,7 +60,7 @@ int main() {
     cin >> srcRow >> srcCol;
 
     memset(vis, false, sizeof(vis));
-    dfs(srcRow, srcCol);
+    bfs(srcRow, srcCol);
     
     return 0;
 }
