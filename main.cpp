@@ -3,42 +3,27 @@ using namespace std;
 
 class Solution {
 public:
-    int cnt, n, m;
-    bool vis[105][105];
-    vector<pair<int,int>> mv = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+    vector<vector<int>> adj_list;
+    vector<bool> vis;
 
-    bool valid(int i, int j) {
-        return !(i < 0 || i >= n || j < 0 || j >= m);
+    void dfs(int src) {
+        vis[src] = true;
+        for (int ch : adj_list[src])
+            if(!vis[ch])
+                dfs(ch);
     }
 
-    void dfs(int si, int sj, vector<vector<int>>& grid) {
-        vis[si][sj] = true;
-
-        for(pair mvPair : mv) {
-            int ci = si + mvPair.first;
-            int cj = sj + mvPair.second;
-
-            if(!valid(ci, cj))
-                cnt++;
-            else if (valid(ci, cj) && grid[ci][cj]==0)
-                cnt++;
-            else if (valid(ci, cj) && grid[ci][cj] == 1 && !vis[ci][cj])
-                {
-                    dfs(ci, cj, grid);
-                }
+    bool validPath(int n, vector<vector<int>>& edges, int source, int destination) {
+        adj_list.assign(n, {});
+        vis.assign(n, false);
+        for (int i = 0; i < edges.size(); i++){
+            int a = edges[i][0];
+            int b = edges[i][1];
+            adj_list[a].push_back(b);
+            adj_list[b].push_back(a);
         }
-    }
 
-    int islandPerimeter(vector<vector<int>>& grid) {
-        cnt = 0;
-        n = grid.size();
-        m = grid[0].size();
-        memset(vis, false, sizeof(vis));
-        for(int i = 0; i < n; i++)
-            for(int j = 0; j < m; j++)
-                if(!vis[i][j] && grid[i][j] == 1)
-                    dfs(i, j, grid);
-
-        return cnt;
+        dfs(source);
+        return vis[destination];
     }
 };
