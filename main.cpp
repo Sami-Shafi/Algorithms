@@ -3,20 +3,22 @@ using namespace std;
 
 vector<vector<int>> adj_list;
 vector<bool> vis;
-vector<int> parent;
+vector<bool> pathVis;
 bool cycle;
 
 void dfs(int src) {
     vis[src] = true;
-    
+    pathVis[src] = true;
+
     for (int child : adj_list[src])
     {
         if(!vis[child]) {
-            parent[child] = src;
+            pathVis[child] = true;
+            vis[child] = true;
             dfs(child);
-        }else if (parent[src] != child) cycle = true;
+        }else if (pathVis[child]) cycle = true;
     }
-    
+    pathVis[src] = false;
 }
 
 int main ()
@@ -25,16 +27,13 @@ int main ()
     cin >> n >> e;
     adj_list.assign(n, {});
     vis.assign(n, false);
-    parent.assign(n, -1);
+    pathVis.assign(n, false);
 
     while (e--)
     {
         int a, b;
         cin >> a >> b;
         adj_list[a].push_back(b);
-
-        // do not include for directed
-        adj_list[b].push_back(a);
     }
 
     cycle = false;
