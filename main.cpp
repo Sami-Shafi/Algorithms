@@ -52,10 +52,7 @@ int main ()
         if(!vis[i])
             bfs(i);
 
-    if(cycle) 
-        cout << "Cycle Detected!";
-    else 
-        cout << "No Cycle!";
+    cout << (cycle ? "Cycle Detected!" : "No Cycle!") << endl;
     
     return 0;
 }
