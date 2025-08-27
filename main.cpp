@@ -1,49 +1,61 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-class Solution {
-public:
-    int cnt, n, m;
-    vector<vector<bool>> vis;
-    vector<pair<int,int>> mv = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
-    bool match = true;
+vector<vector<int>> adj_list;
+vector<bool> vis;
+vector<int> parent;
+bool cycle;
 
-    bool valid(int i, int j) {
-        return !(i < 0 || i >= n || j < 0 || j >= m);
-    }
+void bfs(int src) {
+    queue<int> q;
+    vis[src] = true;
+    q.push(src);
 
-    void dfs(int si, int sj, vector<vector<int>>& grid) {
+    while (!q.empty())
+    {
+        int fr = q.front();
+        q.pop();
 
-        vis[si][sj] = true;
+        for (int child : adj_list[fr]) {
+            if(vis[child] && parent[fr] != child) cycle = true;
 
-        for(pair mvPair : mv) {
-            int ci = si + mvPair.first;
-            int cj = sj + mvPair.second;
-
-            if(!valid(ci, cj)) {
-                match = false;
+            if(!vis[child]) {
+                q.push(child);
+                vis[child] = true;
+                parent[child] = fr;
             }
-
-            if (valid(ci, cj) && grid[ci][cj] == 0 && !vis[ci][cj])
-                dfs(ci, cj, grid);
         }
     }
+    
+}
 
-    int closedIsland(vector<vector<int>>& grid) {
-        cnt = 0;
-        n = grid.size();
-        m = grid[0].size();
-        vis.assign(n, vector<bool>(m, false));
-        
-        for(int i = 0; i < n; i++)
-            for(int j = 0; j < m; j++)
-                if(!vis[i][j] && grid[i][j] == 0)
-                {
-                    match = true;
-                    dfs(i, j, grid);
-                    if(match) cnt++;
-                }
+int main ()
+{
+    int n, e;
+    cin >> n >> e;
+    adj_list.assign(n, {});
+    vis.assign(n, false);
+    parent.assign(n, -1);
 
-        return cnt;
+    while (e--)
+    {
+        int a, b;
+        cin >> a >> b;
+        adj_list[a].push_back(b);
+
+        // do not include for directed
+        adj_list[b].push_back(a);
     }
-};
+
+    cycle = false;
+    for (int i = 0; i < n; i++)
+        if(!vis[i])
+            bfs(i);
+
+    if(cycle) 
+        cout << "Cycle Detected!";
+    else 
+        cout << "No Cycle!";
+    
+    return 0;
+}
