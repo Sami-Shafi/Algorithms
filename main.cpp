@@ -4,17 +4,17 @@ vector<vector<pair<int, int>>> adj_list;
 vector<int> weightArr;
 
 void dijkstra(int src) {
-    queue<pair<int, int>> q;
-    q.push({src, 0});
+    priority_queue<pair<int, int>, vector<pair<int,int>>, greater<pair<int, int>>> pq;
+    pq.push({src, 0});
     weightArr[src] = 0;
 
-    while (!q.empty())
+    while (!pq.empty())
     {
-        pair<int, int> par = q.front();
-        q.pop();
+        pair<int, int> par = pq.top();
+        pq.pop();
 
-        int p_node = par.first;
-        int p_weight = par.second;
+        int p_weight = par.first;
+        int p_node = par.second;
 
         for (auto child : adj_list[p_node])
         {
@@ -25,7 +25,7 @@ void dijkstra(int src) {
             if(latest_weight < weightArr[c_node])
             {
                 weightArr[c_node] = latest_weight;
-                q.push({c_node, weightArr[c_node]});
+                pq.push({weightArr[c_node], c_node});
             }
         }
         
