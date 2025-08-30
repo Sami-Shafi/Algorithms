@@ -1,60 +1,69 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-vector<vector<pair<int, int>>> adj_list;
-vector<int> weightArr;
 
-void dijkstra(int src) {
-    priority_queue<pair<int, int>, vector<pair<int,int>>, greater<pair<int, int>>> pq;
-    pq.push({src, 0});
-    weightArr[src] = 0;
+vector<vector<char>> grid;
+vector<vector<bool>> vis;
+vector<vector<int>> level;
+vector<pair<int,int>> mv = {{-1,0}, {1,0}, {0, -1}, {0, 1}};
+int n, m;
 
-    while (!pq.empty())
+bool valid(int i, int j) {
+    if (i<0 || i>=n || j<0 || j>=m || grid[i][j] == '-') return false;
+    return true;
+}
+
+void sameComp(int si, int sj, int di, int dj) {
+    if(!valid(si, sj) || !valid(di, dj)) return;
+    queue<pair<int, int>> q;
+    q.push({si, sj});
+    vis[si][sj] = true;
+    level[si][sj] = 0;
+
+    while (!q.empty())
     {
-        pair<int, int> par = pq.top();
-        pq.pop();
+        pair<int, int> par = q.front();
+        q.pop();
 
-        int p_weight = par.first;
-        int p_node = par.second;
-
-        for (auto child : adj_list[p_node])
+        for (int i = 0; i < mv.size(); i++)
         {
-            int c_node = child.first;
-            int c_weight = child.second;
+            int ci = par.first + mv[i].first;
+            int cj = par.second + mv[i].second;
 
-            int latest_weight = p_weight+c_weight;
-            if(latest_weight < weightArr[c_node])
+            if(valid(ci, cj) && !vis[ci][cj])
             {
-                weightArr[c_node] = latest_weight;
-                pq.push({weightArr[c_node], c_node});
+                q.push({ci, cj});
+                vis[ci][cj] = true;
+                level[ci][cj] = level[par.first][par.second] + 1;
             }
         }
         
     }
-    
 }
 
-int main ()
-{
-    int n, e;
-    cin >> n >> e;
+int main() {
     
-    adj_list.resize(n);
-    weightArr.assign(n, INT_MAX);
-    while (e--)
-    {
-        int a, b, c;
-        cin >> a >> b >> c;
-        adj_list[a].push_back({b, c});
-        adj_list[b].push_back({a, c});
-    }
-
-    dijkstra(0);
+    cin >> n >> m;
+    grid.assign(n, vector<char>(m, ' '));
+    vis.assign(n, vector<bool>(m, false));
+    level.assign(n, vector<int>(m, -1));
+    int si,sj,di,dj;
 
     for (int i = 0; i < n; i++)
-    {
-        cout << i << " -> ";
-        cout << weightArr[i] << endl;
+        for (int j = 0; j < m; j++)
+            {
+                char ourChar;
+                cin >> ourChar;
+                grid[i][j] = ourChar;
+            }
+
+    cin >> si >> sj >> di >> dj;
+    sameComp(si, sj, di, dj);
+
+    if(level[di][dj] == -1){
+        cout << "NO";
+    }else {
+        cout << "YES";
     }
-    
+
     return 0;
 }
