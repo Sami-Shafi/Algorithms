@@ -16,6 +16,8 @@ class Edge
 
 vector<Edge> edge_list;
 vector<int> weightArr;
+bool bellmanComplete = false;
+bool negCycle = false;
 
 void setUpWeightArr() {
     for (int i = 0; i < n; i++)
@@ -25,26 +27,51 @@ void setUpWeightArr() {
     weightArr[0] = 0;
 }
 
+void printWeightArr() {
+    for (int i = 0; i < n; i++)
+    {
+        cout << i << " -> " << weightArr[i] << endl;
+    }
+}
+
+void bellmanLoop(vector<Edge> edge_list) {
+    for (auto edge : edge_list)
+    {
+        int a,b,c;
+        a = edge.a;
+        b = edge.b;
+        c = edge.c;
+
+        if(weightArr[a] == INT_MAX) continue;
+
+        int latestWeight = weightArr[a]+c;
+        if(latestWeight < weightArr[b])
+            if(!bellmanComplete)
+                weightArr[b] = latestWeight;
+            else 
+                {
+                    negCycle = true;
+                    break;
+                }
+    }
+}
+
 void bellmanFord() {
     
     setUpWeightArr();
 
     for (int i = 0; i < n-1; i++)
     {
-        for (auto edge : edge_list)
-        {
-            int a,b,c;
-            a = edge.a;
-            b = edge.b;
-            c = edge.c;
-
-            if(weightArr[a] == INT_MAX) continue;
-
-            int latestWeight = weightArr[a]+c;
-            if(latestWeight < weightArr[b])
-                weightArr[b] = latestWeight;
-        }
+        bellmanLoop(edge_list);
     }
+    bellmanComplete = true;
+
+    bellmanLoop(edge_list);
+    if(negCycle)
+        cout << "Negative-Weighted Cycle Detected!";
+    else
+        printWeightArr();
+
 }
 
 int main() {
@@ -61,11 +88,6 @@ int main() {
     }
 
     bellmanFord();
-    
-    for (int i = 0; i < n; i++)
-    {
-        cout << i << " -> " << weightArr[i] << endl;
-    }
 
     return 0;
 }
