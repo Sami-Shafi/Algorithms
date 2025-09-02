@@ -1,23 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int n,e;
-
-class Edge
-{
-    public:
-        int a,b,c;
-        Edge(int a, int b, int c) {
-            this->a = a;
-            this->b = b;
-            this->c = c;
-        }
-};
-
-vector<Edge> edge_list;
+int n,m, q;
+vector<vector<pair<int, int>>> adj_list;
 vector<int> weightArr;
-bool bellmanComplete = false;
-bool negCycle = false;
+
 
 void setUpWeightArr() {
     for (int i = 0; i < n; i++)
@@ -34,60 +21,58 @@ void printWeightArr() {
     }
 }
 
-void bellmanLoop(vector<Edge> edge_list) {
-    for (auto edge : edge_list)
+void dijkstra(int src) {
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+    pq.push({0, src});
+    weightArr[src] = 0;
+
+    while (!pq.empty()) 
     {
-        int a,b,c;
-        a = edge.a;
-        b = edge.b;
-        c = edge.c;
+        pair<int,int> par = pq.top();
+        int p_weight = par.first;
+        int p_node = par.second;
 
-        if(weightArr[a] == INT_MAX) continue;
+        for (auto childPair : adj_list[p_node])
+        {
+            int c_weight = par.first;
+            int c_node = par.second;
 
-        int latestWeight = weightArr[a]+c;
-        if(latestWeight < weightArr[b])
-            if(!bellmanComplete)
-                weightArr[b] = latestWeight;
-            else 
-                {
-                    negCycle = true;
-                    break;
-                }
+            int latest_weight = p_weight+c_weight;
+            if(latest_weight < weightArr[c_node]) {
+                weightArr[c_node] = latest_weight;
+                pq.push({weightArr[c_weight], c_node});
+            }
+        }
+        
     }
-}
-
-void bellmanFord() {
     
-    setUpWeightArr();
-
-    for (int i = 0; i < n-1; i++)
-    {
-        bellmanLoop(edge_list);
-    }
-    bellmanComplete = true;
-
-    bellmanLoop(edge_list);
-    if(negCycle)
-        cout << "Negative-Weighted Cycle Detected!";
-    else
-        printWeightArr();
-
 }
 
 int main() {
 
-    cin >> n >> e;
+    cin >> n >> m >> q;
+    int e = m;
+    adj_list.resize(n);
     weightArr.resize(n);
-    edge_list.resize(e, Edge(0,0,0));
 
     while (e--)
     {
         int a,b,c;
         cin >> a >> b >> c;
-        edge_list.push_back(Edge(a,b,c));
+
+        adj_list[a].push_back({b, c});
+        adj_list[b].push_back({a, c});
     }
 
-    bellmanFord();
+    while (q--)
+    {
+        setUpWeightArr();
+        int src, target;
+        cin >> src >> target;
+        dijkstra(src);
+        cout << "src: " << src << " | Target: " << target << " | Weight: " << weightArr[target] << endl;
+    }
+    
 
     return 0;
 }
