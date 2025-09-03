@@ -1,78 +1,68 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int n,m, q;
-vector<vector<pair<int, int>>> adj_list;
-vector<int> weightArr;
+int n,m;
+vector<vector<int>> adj_mat;
 
-
-void setUpWeightArr() {
-    for (int i = 0; i < n; i++)
-    {
-        weightArr[i] = INT_MAX;
-    }
-    weightArr[0] = 0;
+bool valid(int num) {
+    return !(num >= INT_MAX);
 }
 
-void printWeightArr() {
-    for (int i = 0; i < n; i++)
-    {
-        cout << i << " -> " << weightArr[i] << endl;
-    }
-}
-
-void dijkstra(int src) {
-    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
-    pq.push({0, src});
-    weightArr[src] = 0;
-
-    while (!pq.empty()) 
-    {
-        pair<int,int> par = pq.top();
-        int p_weight = par.first;
-        int p_node = par.second;
-
-        for (auto childPair : adj_list[p_node])
-        {
-            int c_weight = par.first;
-            int c_node = par.second;
-
-            int latest_weight = p_weight+c_weight;
-            if(latest_weight < weightArr[c_node]) {
-                weightArr[c_node] = latest_weight;
-                pq.push({weightArr[c_weight], c_node});
+void floydHarshall() {
+    for (int k = 0; k < n; k++)
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+            {
+                int altPath = adj_mat[i][k] + adj_mat[k][j];
+                int mainPath = adj_mat[i][j];
+                if(valid(adj_mat[i][k]) && valid(adj_mat[k][j]) &&  altPath < mainPath)
+                    adj_mat[i][j] = altPath;
             }
-        }
-        
-    }
-    
 }
+
 
 int main() {
 
-    cin >> n >> m >> q;
+    cin >> n >> m;
     int e = m;
-    adj_list.resize(n);
-    weightArr.resize(n);
+    adj_mat.assign(n, vector<int>(n, 0));
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            if(i!=j)
+                adj_mat[i][j] = INT_MAX;
 
     while (e--)
     {
         int a,b,c;
         cin >> a >> b >> c;
 
-        adj_list[a].push_back({b, c});
-        adj_list[b].push_back({a, c});
-    }
-
-    while (q--)
-    {
-        setUpWeightArr();
-        int src, target;
-        cin >> src >> target;
-        dijkstra(src);
-        cout << "src: " << src << " | Target: " << target << " | Weight: " << weightArr[target] << endl;
+        adj_mat[a][b] = c;
+        // for undirected
+        // adj_mat[b][a] = c;
     }
     
+    floydHarshall();
+
+    bool cycle = false;
+    for (int i = 0; i < n; i++)
+        if(adj_mat[i][i] < 0)
+            cycle = true;
+    
+    if(!cycle) {
+        // print matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++)
+                if(adj_mat[i][j] == INT_MAX)
+                    cout << "INF ";
+                else
+                    cout << adj_mat[i][j] << "   ";
+        
+            cout << endl;
+        }
+    }else 
+        cout << "Negative-Weighted Cycle Detected!";
+
 
     return 0;
 }
