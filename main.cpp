@@ -41,12 +41,20 @@ int main() {
     memset(leads, -1, sizeof(leads));
     memset(group_size, 1, sizeof(group_size));
     
-    dsu_union(1, 2);
-    dsu_union(2, 0);
-    dsu_union(3, 1);
-
-    for (int i = 0; i < 6; i++)
-        cout << i << " -> " << leads[i] << endl;
+    int n, e;
+    cin >> n >> e;
+    bool cycle = false;
+    while (e--)
+    {
+        int a,b;
+        cin >> a >> b;
+        if(find(a) == find(b))
+            cycle = true;
+        else
+            dsu_union(a, b);
+    }
+    if(cycle)
+        cout << "Cycle Detected!" << endl;
 
     return 0;
 }
