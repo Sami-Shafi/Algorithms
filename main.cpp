@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 int leads[1005];
+int group_size[1005];
 
 // loop
 // int find (int node)
@@ -23,22 +24,29 @@ int find (int node)
     return newleads;
 }
 
+void dsu_union(int node1, int node2) {
+    int lead1 = find(node1);
+    int lead2 = find(node2);
+
+    if(group_size[lead1] >= group_size[lead2]) {
+        leads[lead2] = lead1;
+        group_size[lead1]+=group_size[lead2];
+    }else {
+        leads[lead1] = lead2;
+        group_size[lead2]+=group_size[lead1];
+    }
+}
+
 int main() {
     memset(leads, -1, sizeof(leads));
-    leads[0] = 1;
-    leads[1] = -1;
-    leads[2] = 7;
-    leads[3] = 1;
-    leads[4] = 5;
-    leads[5] = 3;
-
-    cout << find(4) << endl;
+    memset(group_size, 1, sizeof(group_size));
+    
+    dsu_union(1, 2);
+    dsu_union(2, 0);
+    dsu_union(3, 1);
 
     for (int i = 0; i < 6; i++)
-    {
         cout << i << " -> " << leads[i] << endl;
-    }
-    
 
     return 0;
 }
