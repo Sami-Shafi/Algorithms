@@ -1,48 +1,62 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// You are given an array H representing the heights of N vertical lines positioned at equally spaced intervals along a two-dimensional plane. The i-th line's height is represented by the integer H where 0 <= i < N and the height will be unique.
+int n,e;
+vector<vector<long long int>> adj_mat;
 
-// You need to find the two lines, such that together with the x-axis forms a container that can hold the most water in term of height.
+// You'll be given a graph of N nodes and E edges. For each edge, you'll be given A, B and W which means there is an edge from A to B only and which will cost W.
 
-// Note: Print the left index first, then the right index.
+// Also, you'll be given Q queries, for each query you'll be given S and D, where S is the source and D is the destination. You need to print the minimum cost from S to D for each query. If there is no connection between S and D, print -1.
+
+// Note: There can be multiple edges from one node to another. Make sure you handle this one.
 
 // Input Format
-// First line will contain T, the number of test cases.
-// First line of each test case will contain N.
-// Second line of each test case will contain the array H.
+
+// First line will contain N and E.
+// Next E lines will contain A, B and W.
+// After that you'll get Q.
+// Next Q queries will contain S and D.
+
+void floydWarshall () {
+    for (int k = 1; k <= n; k++)
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= n; j++)
+                if(adj_mat[i][k] != LLONG_MAX && adj_mat[k][j] != LLONG_MAX)
+                    adj_mat[i][j] = min(adj_mat[i][k]+adj_mat[k][j], adj_mat[i][j]);
+    
+}
 
 int main() {
+    
+    cin >> n >> e;
+    adj_mat.assign(n+5, vector<long long int>(n+5, LLONG_MAX));
 
-    int t;
-    cin >> t;
+    for (int i = 1; i <= n; i++)
+        adj_mat[i][i] = 0;
 
-    while (t--) {
-
-        int n;
-        cin >> n;
-        vector<int> heights(n);
-
-        for (int i = 0; i < n; i++)
-            cin >> heights[i];
-
-        int highest = -1, secondHighest = -1;
-        int lWallIndex = -1, rWallIndex = -1;
-
-        for (int i = 0; i < n; i++) {
-            if (heights[i] > highest) {
-                secondHighest = highest; rWallIndex = lWallIndex;
-                highest = heights[i]; lWallIndex = i;
-            } else if (heights[i] > secondHighest) {
-                secondHighest = heights[i];
-                rWallIndex = i;
-            }
-        }
-
-        if (lWallIndex > rWallIndex)
-            swap(lWallIndex, rWallIndex);
-
-        cout << lWallIndex << " " << rWallIndex << endl;
+    while (e--)
+    {
+        int a,b;
+        long long int w;
+        cin >> a >> b >> w;
+        adj_mat[a][b] = min(adj_mat[a][b], w);
     }
+    
+    floydWarshall();
+
+    int q;
+    cin >> q;
+    while (q--)
+    {
+        int s,d;
+        cin >> s >> d;
+
+        if(adj_mat[s][d] != LLONG_MAX)
+            cout << adj_mat[s][d] << endl;
+        else
+            cout << -1 << endl;
+    }
+    
+
     return 0;
 }
