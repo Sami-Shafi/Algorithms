@@ -1,40 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int sum(int n) {
+    if (n < 1) return 0;
+    return sum(n-1) + n;
+}
+
 int main() {
-    
-    int t;
-    cin >> t;
 
-    while (t--)
-    {
-        string word;
-        int insIdx = 0;
-        cin >> word;
-        char dchar;
-
-        if(word[0] == 'z')
-            dchar = 'y';
-        else
-            dchar = word[0]+1; 
-            
-        for (int i=0; i < word.length(); i++)
-        {
-            if(i != 0)
-                if(word[i-1] == word[i]) {
-                    insIdx = i;
-                    if(word[i] == 'z')
-                        dchar = 'y';
-                    else
-                        dchar = word[i]+1; 
-                    break;
-                }
-
-        }
-        word.insert(word.begin()+insIdx, dchar);
-        cout << word << endl;
-    }
-    
+    int n;
+    cout << "Input Number to get sum till 1" << endl;
+    cin >> n;
+    cout << sum(n) << endl;
 
     return 0;
 }

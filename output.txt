@@ -1,4 +1,2 @@
-ba
-abaa
-abcb
-pastsword
+Input Number to get sum till 1
+15
