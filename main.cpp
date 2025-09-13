@@ -1,20 +1,36 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-int main() {
-    
-    int n;
+vector<int> val;
+vector<int> weight;
+
+int knapsack(int idx, int weight_cap) {
+    if(idx < 0 || weight_cap == 0)
+        return 0;
+
+    int opt1 = knapsack(idx-1, weight_cap-weight[idx]) + val[idx];
+    int opt2 = knapsack(idx-1, weight_cap);
+    if(weight[idx] <= weight_cap)
+        return max(opt1, opt2);
+    else
+        return opt2;
+}
+
+int main ()
+{
+    int n, weight_cap;
     cin >> n;
-    int fibo[n+1];
-    fibo[0] = 0;
-    fibo[1] = 1;
+    val.resize(n);
+    weight.resize(n);
+
+    for (int i = 0; i < n; i++)
+        cin >> val[i];
     
-    for (int i = 2; i <= n; i++)
-    {
-        fibo[i] = fibo[i-1] + fibo[i-2];
-    }
+    for (int i = 0; i < n; i++)
+        cin >> weight[i];
 
-    cout << fibo[n] << endl;
-
+    cin >> weight_cap;
+    cout << knapsack(n-1, weight_cap) << endl;
+    
     return 0;
 }
