@@ -1,22 +1,46 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-int main() {
+vector<int> val;
+vector<int> weight;
+vector<vector<int>> dp;
+
+int knapsack(int idx, int weight_cap) {
+    if(idx < 0 || weight_cap <= 0)
+        return 0;
+
+    if(dp[idx][weight_cap] != -1)
+        return dp[idx][weight_cap];
     
-    long long int n;
-    cin >> n;
-    long long int tetra[n+1];
-    tetra[0] = 0;
-    tetra[1] = 1;
-    tetra[2] = 1;
-    tetra[3] = 2;
+    int opt1 = 0;
+    if(weight[idx] <= weight_cap)
+        opt1 = knapsack(idx-1, weight_cap-weight[idx]) + val[idx];
+
+    int opt2 = knapsack(idx-1, weight_cap);
     
-    for (long long int i = 4; i <= n; i++)
+    return dp[idx][weight_cap] = max(opt1, opt2);
+}
+
+int main ()
+{
+    int t;
+    cin >> t;
+    while (t--)
     {
-        tetra[i] = tetra[i-1] + tetra[i-2] + tetra[i-3] + tetra[i-4];
+        int n, weight_cap;
+        cin >> n >> weight_cap;
+        val.assign(n, 0);
+        weight.assign(n, 0);
+        dp.assign(n, vector<int>(weight_cap+5, -1));
+
+        for (int i = 0; i < n; i++)
+            cin >> weight[i];
+        
+        for (int i = 0; i < n; i++)
+            cin >> val[i];
+        
+        cout << knapsack(n-1, weight_cap) << endl;
     }
-
-    cout << tetra[n] << endl;
-
+    
     return 0;
 }
