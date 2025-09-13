@@ -1,42 +1,33 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-vector<int> val;
-vector<int> weight;
-vector<vector<int>> dp;
+// The Tetranacci sequence is an extension of the well-known Fibonacci sequence, incorporating four previous terms instead of two.
 
-int knapsack(int idx, int weight_cap) {
-    if(idx < 0 || weight_cap == 0)
-        return 0;
+// The Tetranacci sequence Tn is defined as follows:
+// T0 = 0, T1 = 1, T2 = 1,T3 = 2
+// For n >= 4, Tn = Tn-1 + Tn-2 + Tn-3 + Tn-4
+// Given an integer 𝑛, return the value of Tn
 
-    if(dp[idx][weight_cap] != -1)
-        return dp[idx][weight_cap];
+// Note : You must solve this problem using Recursion. (Top Down)
 
-    int opt1 = knapsack(idx-1, weight_cap-weight[idx]) + val[idx];
-    int opt2 = knapsack(idx-1, weight_cap);
-    if(weight[idx] <= weight_cap)
-        return dp[idx][weight_cap] = max(opt1, opt2);
-    else
-        return dp[idx][weight_cap] = opt2;
+// Input Format
+// A single integer n representing the position in the Tetranacci sequence.
+
+int memArr[1005];
+int tetra(int n) {
+    if(memArr[n] != -1) return memArr[n];
+    return memArr[n] = tetra(n-1) + tetra(n-2) + tetra(n-3) + tetra(n-4);
 }
 
-int main ()
-{
-    int n, weight_cap;
+int main() {
+    memset(memArr, -1, sizeof(memArr));
+    memArr[0] = 0;
+    memArr[1] = 1;
+    memArr[2] = 1;
+    memArr[3] = 2;
+    int n;
     cin >> n;
-    val.resize(n);
-    weight.resize(n);
+    cout << tetra(n) << endl;
 
-    dp.assign(n, vector<int>(weight_cap, -1));
-
-    for (int i = 0; i < n; i++)
-        cin >> val[i];
-    
-    for (int i = 0; i < n; i++)
-        cin >> weight[i];
-
-    cin >> weight_cap;
-    cout << knapsack(n-1, weight_cap) << endl;
-    
     return 0;
 }
